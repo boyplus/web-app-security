@@ -94,7 +94,7 @@ Group ID: TTV19S1
 
    - Use this token (add Authorization in header) to change victim's password by calling API PUT `/api/user` (the token will be considered as a verified token of victim)
 
-     ![Screen Shot 2565-01-26 at 00.26.38](/Users/boyplus/Desktop/CS/JAMK/Web-App-Security/Week2/Screen Shot 2565-01-26 at 00.26.38.png)
+     ![Screen Shot 2565-01-26 at 01.54.00](/Users/boyplus/Desktop/CS/JAMK/Web-App-Security/Week2/Screen Shot 2565-01-26 at 01.54.00.png)
 
      From the above image, we can use that JWT to change the password of victim.
 
