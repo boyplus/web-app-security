@@ -97,7 +97,7 @@ Group ID: TTV19S1
 
    - After user view the article, we can capture the victim's JWT from console log as shown below
 
-     ![Screen Shot 2565-02-09 at 09.46.16](/Users/boyplus/Desktop/Screen Shot 2565-02-09 at 09.46.16.png)
+     <img src="/Users/boyplus/Desktop/CS/JAMK/Web-App-Security/Week4/Screenshot/Screen Shot 2565-02-09 at 09.46.16.png" alt="Screen Shot 2565-02-09 at 09.46.16" style="zoom:50%;" />
 
    **Impact estimation:** High serverity because attacker can capture the JWT of user whenever user view the article that attacker create. That means attacker can control the victim's account.
 
@@ -112,6 +112,13 @@ Group ID: TTV19S1
 
 1. [Watch and answer] (3 pts) 
 
-   Based on lecture videos try to explain the terms serialization and deserialization used in computer science 
+   - Based on lecture videos try to explain the terms serialization and deserialization used in computer science
+
+     Serialization is a process of converting the state of object into a byte stream that might store on file, memory, or database. Deserialization is a reverse of serialization which means it is a mechanism that use the byte stream to create the actual object in the particular object. Benifits of serialization is that we can save the state of object and can send the byte stream across the network.
+
+     The vulnerabilities that might be enable is when attacker manipulate the serialized object such as replace a serialized object with an object of different class. That means attacker can pass harmful data into application.
+
+     The different of serialization between programming language is the type of serialization file. For example, java will convert to .ser and python might convert to .picl (in case we use pickle library)
 
 2. [Issue report] WasDat Insecure Deserialization (7 pts)
+
