@@ -11,11 +11,12 @@ Group ID: TTV19S1
 1. [Reading report] RWBH Chapter 7: Cross-Site Scripting (pp. 55-70) (3 pts) 
 
    - What factors make XSS vulnerabilities more critical and why (max 2 points, 1 point per factor)
-  - It can read the DOM element or cookies that might contain the sensitive data of user and attacker can send it to them.
+     - It can read the DOM element or cookies that might contain the sensitive data of user and attacker can send it to them.
      - The malicious script can speard to other user. According to the Myspace example in the book, the malicious script can copy the to user's profile and when another user visite the victim profile, they will also infected by that malicious script.
+   
    - What are the two main types of XSS and how do they differ from each other? (1 point)
      - The two main types of XSS are reflected XSS and stored XSS. The difference is that reflected XSS occur when victim open the link that contains the malicious script on the user's web browser (happend on user's web browser). In contrast, stored XSS is an injection that attacker inject malicious scripts on the server (happend on server) such as some field in the database.
-
+   
 2. [Issue report] **Target => Juice Shop**: DOM XSS (2 pts)
 
    **Title:** Attcker enable to perform DOM XSS to search input.
@@ -180,11 +181,11 @@ Group ID: TTV19S1
      After backend deserialized, file `boyplus.txt` will be created in `/bin/bash`  as shown below
 
      ![Screen Shot 2565-02-10 at 00.00.57](/Users/boyplus/Desktop/CS/JAMK/Web-App-Security/Week4/Screenshot/Screen Shot 2565-02-10 at 00.00.57.png)
-  
+    
    - Run simple netcat server on port `8888` by running (on our machine)
 
      ```shell
-  nc -nvlp 8888
+    nc -nvlp 8888
      ```
 
    - In order to reverse shell, edit `main.py` to the following code 
