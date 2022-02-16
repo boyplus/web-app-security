@@ -121,13 +121,21 @@ Group ID: TTV19S1
 
    **Impact Estimation:** High serverity because attacker can capture the sensitive data inside the HTTP request such as JWT of user.
 
-   **Mitigation:**
-
-   According to official website of heartbleed, there are two ways for mitigation
+   **Mitigation:** According to official website of heartbleed, there are two ways for mitigation
 
    - Upgrade to OpenSSL 1.0.1g
    - Recompile OpenSSL with -DOPENSSL_NO_HEARTBEATS
 
-2. [Essay] Insufficient logging and monitoring (5 pts) 
+2. [Essay] Insufficient logging and monitoring (5 pts)
 
-   
+   **Logging** is a process that we record some information when the specific event occurs such as record the username, password and time of login when that login is failed. **Monitoring** is a process to look at analyze the logs and anylyze logs such as monitor the failed login that how many times it occurs in the specific period.
+
+   The **real wold example** of logging and monitoring the failed login event. Suppose you did not do any logging and monitoring the failed login event in your application, attacker can bruteforce to try to login to some user with the common password. They can try it many times as they want and the password might be correct at some point. On the other hand, if you have the logging and monitoring, you can handle to this situation. For example, log the failed login that store the username and time. We can monitor them e.g. when the login failed for 5 times (alert thresholds) in a row, web app should provide the warning or error message to prevent the attacker to login again. 
+
+   To **improve** the logging and monitoring, ensure that you adjust the alert thresholds properly, ensure that logs are generated in a format that can be easily consumed. You also need to ensure that you have the response plan to that event because logging and monitoring would be useless if you do not take any actions.
+
+   Things that you should logged and monitor are all login, access control failures, and server-side input validation. You should log in the centraized log management.
+
+   You could use **Web Application Firewalls** (WAFs) for logging and monitoring, you can add a alert rule to WAFs to protect the workload. Benifits of WAFs is that it can protect web application from attacks such as XSS, SQL injection.  The lack of WAFs is that it is not designed to defend against all types of attacks.
+
+   In order to verify that we can really detected and logged the actions, we might make the request that cause the actions. For example, try to bruteforce to login some user's account for many times which depends on your rule.
